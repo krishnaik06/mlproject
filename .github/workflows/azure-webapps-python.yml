@@ -20,7 +20,7 @@
 name: Build and deploy Python app to Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: mlprojects  # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: mlproject-test  # set this to the name of your Azure Web App
   PYTHON_VERSION: '3.8'              # set this to the Python version to use
 
 on:
