@@ -1,6 +1,6 @@
 import os
 import sys
-from src.exception import CustomException
+import exception
 from src.logger import logging
 import pandas as pd
 
