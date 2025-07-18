@@ -1,111 +1,468 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Exam Performance Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; }
+        .form-group:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 1rem;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            outline: none;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        select:hover, input[type="number"]:hover {
+            border-color: #667eea;
+        }
+
+        .score-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .score-input {
+            position: relative;
+        }
+
+        .score-display {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .score-display.visible {
+            opacity: 1;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e6ed;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .form-validation {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-validation.show {
+            opacity: 1;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .score-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
 <body>
-    <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-   
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <label class="form-label">Gender</label>
-            <select class="form-control" name="gender" placeholder="Enter you Gender" required>
-                <option class="placeholder" selected disabled value="">Select your Gender</option>
-                <option value="male">
-                    Male
-                </option>
-                <option value="female">
-                    Female
-                </option>
-            </select>
+    <div class="container">
+        <h1>📚 Student Exam Performance Predictor</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Race or Ethnicity</label>
-            <select class="form-control" name="ethnicity" placeholder="Enter you ethnicity" required>
-                <option class="placeholder" selected disabled value="">Select Ethnicity</option>
-                <option value="group A">
-                    Group A
-                </option>
-                <option value="group B">
-                    Group B
-                </option>
-                <option value="group C">
-                    Group C
-                </option>
-                <option value="group D">
-                    Group D
-                </option>
-                <option value="group E">
-                    Group E
-                </option>
-            </select>
+        
+        <form id="examForm" action="{{ url_for('predict_datapoint')}}" method="post">
+            <div class="form-group">
+                <label for="gender"><span class="icon">👤</span>Gender</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select your Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+                <div class="form-validation">Please select your gender</div>
+            </div>
+
+            <div class="form-group">
+                <label for="ethnicity"><span class="icon">🌍</span>Race or Ethnicity</label>
+                <select id="ethnicity" name="ethnicity" required>
+                    <option value="">Select Ethnicity</option>
+                    <option value="group A">Group A</option>
+                    <option value="group B">Group B</option>
+                    <option value="group C">Group C</option>
+                    <option value="group D">Group D</option>
+                    <option value="group E">Group E</option>
+                </select>
+                <div class="form-validation">Please select your ethnicity</div>
+            </div>
+
+            <div class="form-group">
+                <label for="parental_level_of_education"><span class="icon">🎓</span>Parental Level of Education</label>
+                <select id="parental_level_of_education" name="parental_level_of_education" required>
+                    <option value="">Select Parent Education</option>
+                    <option value="some high school">Some High School</option>
+                    <option value="high school">High School</option>
+                    <option value="some college">Some College</option>
+                    <option value="associate's degree">Associate's Degree</option>
+                    <option value="bachelor's degree">Bachelor's Degree</option>
+                    <option value="master's degree">Master's Degree</option>
+                </select>
+                <div class="form-validation">Please select parental education level</div>
+            </div>
+
+            <div class="form-group">
+                <label for="lunch"><span class="icon">🍽️</span>Lunch Type</label>
+                <select id="lunch" name="lunch" required>
+                    <option value="">Select Lunch Type</option>
+                    <option value="free/reduced">Free/Reduced</option>
+                    <option value="standard">Standard</option>
+                </select>
+                <div class="form-validation">Please select lunch type</div>
+            </div>
+
+            <div class="form-group">
+                <label for="test_preparation_course"><span class="icon">📖</span>Test Preparation Course</label>
+                <select id="test_preparation_course" name="test_preparation_course" required>
+                    <option value="">Select Test Course</option>
+                    <option value="none">None</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <div class="form-validation">Please select test preparation status</div>
+            </div>
+
+            <div class="score-inputs">
+                <div class="form-group">
+                    <label for="reading_score"><span class="icon">📚</span>Reading Score</label>
+                    <div class="score-input">
+                        <input type="number" id="reading_score" name="reading_score" 
+                               placeholder="Enter Reading Score" min="0" max="100" required>
+                        <div class="score-display" id="readingDisplay"></div>
+                    </div>
+                    <div class="form-validation">Please enter a valid reading score (0-100)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="writing_score"><span class="icon">✏️</span>Writing Score</label>
+                    <div class="score-input">
+                        <input type="number" id="writing_score" name="writing_score" 
+                               placeholder="Enter Writing Score" min="0" max="100" required>
+                        <div class="score-display" id="writingDisplay"></div>
+                    </div>
+                    <div class="form-validation">Please enter a valid writing score (0-100)</div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                🔮 Predict Math Score
+            </button>
+        </form>
+
+        <div class="result {% if results %}show{% endif %}" id="result">
+            <div id="resultText">
+                {% if results %}
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+                    <div>Predicted Math Score: <strong>{{ results }}</strong></div>
+                {% endif %}
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Parental Level of Education</label>
-            <select class="form-control" name="parental_level_of_education"
-                placeholder="Enter you Parent Education" required>
-                <option class="placeholder" selected disabled value="">Select Parent Education</option>
-                <option value="associate's degree">
-                    associate's degree
-                </option>
-                <option value="bachelor's degree">
-                    bachelor's degree
-                </option>
-                <option value="high school">
-                    high school
-                </option>
-                <option value="master's degree">
-                    master's degree
-                </option>
-                <option value="some college">
-                    some college
-                </option>
-                <option value="some high school">
-                    some high school
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Lunch Type</label>
-            <select class="form-control" name="lunch" placeholder="Enter you Lunch" required>
-                <option class="placeholder" selected disabled value="">Select Lunch Type</option>
-                <option value="free/reduced">
-                    free/reduced
-                </option>
-                <option value="standard">
-                    standard
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Test preparation Course</label>
-            <select class="form-control" name="test_preparation_course" placeholder="Enter you Course"
-                required>
-                <option class="placeholder" selected disabled value="">Select Test_course</option>
-                <option value="none">
-                    None
-                </option>
-                <option value="completed">
-                    Completed
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Writing Score out of 100</label>
-            <input class="form-control" type="number" name="reading_score"
-                placeholder="Enter your Reading score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Reading Score out of 100</label>
-            <input class="form-control" type="number" name="writing_score"
-                placeholder="Enter your Reading Score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
-        </div>
-    </form>
-    <h2>
-       THE  prediction is {{results}}
-    </h2>
-   <body>
+    </div>
+
+    <script>
+        const form = document.getElementById('examForm');
+        const progressFill = document.getElementById('progressFill');
+        const result = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+        const readingScore = document.getElementById('reading_score');
+        const writingScore = document.getElementById('writing_score');
+        const readingDisplay = document.getElementById('readingDisplay');
+        const writingDisplay = document.getElementById('writingDisplay');
+
+        // Track form completion
+        function updateProgress() {
+            const inputs = form.querySelectorAll('input, select');
+            let completed = 0;
+            inputs.forEach(input => {
+                if (input.value && input.value !== '') {
+                    completed++;
+                }
+            });
+            const progress = (completed / inputs.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Score display updates
+        function updateScoreDisplay(input, display) {
+            input.addEventListener('input', function() {
+                if (this.value && this.value >= 0 && this.value <= 100) {
+                    display.textContent = this.value;
+                    display.classList.add('visible');
+                } else {
+                    display.classList.remove('visible');
+                }
+                updateProgress();
+            });
+        }
+
+        updateScoreDisplay(readingScore, readingDisplay);
+        updateScoreDisplay(writingScore, writingDisplay);
+
+        // Form validation
+        function validateForm() {
+            const inputs = form.querySelectorAll('input, select');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                const validation = input.parentElement.querySelector('.form-validation') || 
+                                 input.parentElement.parentElement.querySelector('.form-validation');
+                
+                if (!input.value || input.value === '') {
+                    validation.classList.add('show');
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                } else if (input.type === 'number' && (input.value < 0 || input.value > 100)) {
+                    validation.classList.add('show');
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                } else {
+                    validation.classList.remove('show');
+                    input.style.borderColor = '#e0e6ed';
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Add event listeners for real-time validation
+        form.addEventListener('input', function(e) {
+            updateProgress();
+            
+            // Real-time validation
+            const validation = e.target.parentElement.querySelector('.form-validation') || 
+                             e.target.parentElement.parentElement.querySelector('.form-validation');
+            
+            if (e.target.value && e.target.value !== '') {
+                if (e.target.type === 'number' && (e.target.value < 0 || e.target.value > 100)) {
+                    validation.classList.add('show');
+                    e.target.style.borderColor = '#e74c3c';
+                } else {
+                    validation.classList.remove('show');
+                    e.target.style.borderColor = '#e0e6ed';
+                }
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                return;
+            }
+            // Form will submit normally to your Flask backend
+        });
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
 </html>
